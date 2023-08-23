@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <graphics.h>
+
+int main() {
+    int gd = DETECT;
+
+    int gm;
+
+    initgraph(&gd, &gm, "");
+
+    int squareSize = 60;
+
+    int xOffset = 20;
+
+    int yOffset = 20;
+
+    for (int row = 0; row < 6; row++) {
+
+        for (int col = 0; col < 5; col++) {
+
+            if ((row + col) % 2 == 0) {
+
+                setcolor(WHITE);
+
+                rectangle(xOffset + col * squareSize, yOffset + row * squareSize,
+                          xOffset + (col + 1) * squareSize, yOffset + (row + 1) * squareSize);
+               floodfill(xOffset + col * squareSize + 50, yOffset + row * squareSize + 50, WHITE);
+            }
+
+
+            else {
+                setcolor(BLACK);
+
+                rectangle(xOffset + col * squareSize, yOffset + row * squareSize,
+                          xOffset + (col + 1) * squareSize, yOffset + (row + 1) * squareSize);
+
+                floodfill(xOffset + col * squareSize + 50, yOffset + row * squareSize + 50, BLACK);
+            }
+        }
+    }
+
+    scanf("%d");
+
+    closegraph();
+    return 0;
+}
+
+
