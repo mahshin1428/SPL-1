@@ -105,6 +105,9 @@ int setpiece(char piece,int x1, int y1, int x2, int y2)
         readimagefile("b_bishop.gif",x1+20,y1+20,x2-20,y2-20);
     }
 
+
+
+
 }
 
 
@@ -178,6 +181,27 @@ int DrawChessboard()
         x = size;
         y = size + y;
     }
+
+
+
+     settextstyle(6,0,3);             //font,direction,font_size
+     outtextxy(660,50,"Whoose");
+     outtextxy(670,70,"Turn?");
+
+
+    if(whooseMove==0){
+          settextstyle(6,0,3);          //font,direction,font_size
+          outtextxy(660,150, "White");
+          outtextxy(660,170, "player");
+    }
+
+
+    else{
+          settextstyle(6,0,3);                //font,direction,font_size
+          outtextxy(660,550,"Black");
+           outtextxy(660,570, "Player");
+     }
+
 
 
 }
@@ -538,6 +562,9 @@ int kingmove(int x, int y) {
                     if(board[selectedy-1][selectedx-1] >= 65 && board[selectedy-1][selectedx-1] <= 90){
                         if(whooseMove == 0){
                             printf("WHITEMOVED,%c",board[selectedy-1][selectedx-1]);
+
+
+
                             pawnmove(x,y);
                             rookmove(x,y);
                             bishopmove(x,y);
@@ -554,7 +581,7 @@ int kingmove(int x, int y) {
                             moving=0;
                             selectedx = 0;
                             selectedy = 0;
-                            DrawChessboard();
+                          DrawChessboard();
                             if(moving==1)
                             {
                                 selectandmove();
@@ -587,7 +614,7 @@ int kingmove(int x, int y) {
                             moving=0;
                             selectedx = 0;
                             selectedy = 0;
-                            DrawChessboard();
+                           DrawChessboard();
                             /*if(moving==1)
                             {
                                 selectandmove();
@@ -634,5 +661,4 @@ int kingmove(int x, int y) {
 
         return 0;
     }
-
 
