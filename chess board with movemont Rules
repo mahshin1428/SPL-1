@@ -18,7 +18,7 @@ char board[6][5] =
     {'r', 'n', 'b','k','q'}
 };
 
-
+int row,col;
 int pawnvalue=1;
 int rookvalue=4;
 int knightvalue=5;
@@ -34,6 +34,225 @@ int selectedy = 0;
 // whooseMove = 0, white's move
 // whooseMove = 1, black's move
 
+int colour=0;
+//colour=0 white
+//colour=1 black
+
+int piecevalue(int colour)
+{
+    int value=0;
+    for(int row=0; row<6; ++row)
+    {
+        for(int col=0; col<5; ++col)
+        {
+            if(colour==0)  // meaning the white pieces
+            {
+                if(board[row][col]=='P')
+                {
+                    value+=pawnvalue;
+                }
+                if(board[row][col]=='Q')
+                {
+                    value+=queenvalue;
+                }
+                if(board[row][col]=='R')
+                {
+                    value+=rookvalue;
+                }
+                if(board[row][col]=='B')
+                {
+                    value+=bishopvalue;
+                }
+                if(board[row][col]=='N')
+                {
+                    value+=knightvalue;
+                }
+
+
+            }
+            if(colour==1)  // meaning the white pieces
+            {
+                if(board[row][col]=='p')
+                {
+                    value+=pawnvalue;
+                }
+                if(board[row][col]=='q')
+                {
+                    value+=queenvalue;
+                }
+                if(board[row][col]=='r')
+                {
+                    value+=rookvalue;
+                }
+                if(board[row][col]=='b')
+                {
+                    value+=bishopvalue;
+                }
+                if(board[row][col]=='n')
+                {
+                    value+=knightvalue;
+                }
+
+            }
+
+        }
+    }
+    colour=!colour;
+    return value;
+}
+
+bool isValid(int x,int y)
+{
+
+
+}
+
+
+// Function to check if the path between two positions is blocked by any piece
+int isPathBlocked(int startX, int startY, int endX, int endY)
+{
+    int i, j;
+    int stepX = (endX - startX > 0) ? 1 : (endX - startX < 0) ? -1 : 0;
+    int stepY = (endY - startY > 0) ? 1 : (endY - startY < 0) ? -1 : 0;
+
+    for (i = startX + stepX, j = startY + stepY; i != endX || j != endY; i += stepX, j += stepY)
+    {
+        if (board[i][j] != ' ')
+        {
+            // Path is blocked by a piece
+            return 1;
+        }
+    }
+
+    // Path is not blocked
+    return 0;
+}
+
+// Function to check if the black king is in check
+int isBlackKingInCheck()
+{
+
+    int blackKingRow, blackKingCol;
+
+    // Find the position of the black king
+    for (row = 0; row < 6; row++)
+    {
+        for (col = 0; col < 5; col++)
+        {
+            if (board[row][col] == 'k')
+            {
+                blackKingRow = row;
+                blackKingCol = col;
+                break;
+            }
+        }
+    }
+
+    // Check if any white piece can attack the black king
+    for (row = 0; row < 6; row++)
+    {
+        for (col = 0; col < 5; col++)
+        {
+            char piece = board[row][col];
+            switch (piece)
+            {
+            case 'Q': // Queen
+                // Check for horizontal, vertical, or diagonal attack with no obstacles in the way
+                if ((row == blackKingRow || col == blackKingCol || abs(row - blackKingRow) == abs(col - blackKingCol)) &&
+                        !isPathBlocked(row, col, blackKingRow, blackKingCol))
+                    return 1;
+                break;
+            case 'R': // Rook
+                // Check for horizontal or vertical attack with no obstacles in the way
+                if ((row == blackKingRow || col == blackKingCol) && !isPathBlocked(row, col, blackKingRow, blackKingCol))
+                    return 1;
+                break;
+            case 'B': // Bishop
+                // Check for diagonal attack with no obstacles in the way
+                if ((abs(row - blackKingRow) == abs(col- blackKingCol)) && !isPathBlocked(row, col, blackKingRow, blackKingCol))
+                    return 1;
+                break;
+            case 'N':
+                // Check for L-shaped attack
+                if ((row - blackKingRow == 2 && col - blackKingCol == 1) ||(row - blackKingRow == 1 && col - blackKingCol == 2) ||(blackKingRow - row == 2 && blackKingCol - col == 1) ||
+                        (blackKingRow - row == 1 && blackKingCol - col == 2))
+                    return 1;
+                break;
+            case 'P':
+                if ((row - blackKingRow == 1) && (col - blackKingCol == 1 || col - blackKingCol == -1))    // only attack diagonally
+
+                    return 1;
+                break;
+            }
+        }
+    }
+
+    // No piece found that can attack the black king
+    return 0;
+}
+
+// Function to check if the white king is in check
+int isWhiteKingInCheck()
+{
+
+    int whiteKingRow, whiteKingCol;
+
+    // Find the position of the white king
+    for (row = 0; row < 6; row++)
+    {
+        for (col = 0; col < 5; col++)
+        {
+            if (board[row][col] == 'K')
+            {
+                whiteKingRow = row;
+                whiteKingCol = col;
+                break;
+            }
+        }
+    }
+
+    // Check if any black piece can attack the white king
+    for (row = 0; row < 6; row++)
+    {
+        for (col = 0; col < 5; col++)
+        {
+            char piece = board[row][col];
+            switch (piece)
+            {
+            case 'q': // Queen
+                // Check for horizontal, vertical, or diagonal attack with no obstacles in the way
+                if ((row == whiteKingRow || col == whiteKingCol || abs(row - whiteKingRow) == abs(col - whiteKingCol)) &&
+                        !isPathBlocked(row, col, whiteKingRow, whiteKingCol))
+                    return 1;
+                break;
+            case 'r': // Rook
+                // Check for horizontal or vertical attack with no obstacles in the way
+                if ((row == whiteKingRow || col == whiteKingCol) && !isPathBlocked(row, col, whiteKingRow, whiteKingCol))
+                    return 1;
+                break;
+            case 'b': // Bishop
+                // Check for diagonal attack with no obstacles in the way
+                if ((abs(row - whiteKingRow) == abs(col - whiteKingCol)) && !isPathBlocked(row, col, whiteKingRow, whiteKingCol))
+                    return 1;
+                break;
+            case 'n': // Knight
+                // Check for L-shaped attack
+                if ((row - whiteKingRow == 2 && col - whiteKingCol == 1) || (row - whiteKingRow == 1 && col - whiteKingCol == 2) || (whiteKingRow - row == 2 && whiteKingCol - col == 1) ||
+                        (whiteKingRow - row == 1 && whiteKingCol - col == 2))
+                    return 1;
+                break;
+            case 'p': // Pawn
+                // Check for pawn attack (assuming pawns only attack diagonally)
+                if ((whiteKingRow - row == 1) && (col - whiteKingCol == 1 || col - whiteKingCol == -1))
+                    return 1;
+                break;
+            }
+        }
+    }
+
+    // No piece found that can attack the white king
+    return 0;
+}
 
 
 
@@ -191,7 +410,18 @@ int DrawChessboard()
         x = size;
         y = size + y;
     }
-
+    if(isBlackKingInCheck())
+    {
+        settextstyle(6,0,2);
+        outtextxy(660,350,"Black King");
+        outtextxy(660,370,"On Check!");
+    }
+    if(isWhiteKingInCheck())
+    {
+        settextstyle(6,0,2);
+        outtextxy(660,350,"White King");
+        outtextxy(660,370,"On Check");
+    }
     settextstyle(6,0,3);
     outtextxy(660,50,"Whoose");
     outtextxy(670,70,"Turn?");
@@ -209,8 +439,8 @@ int DrawChessboard()
     else
     {
         settextstyle(6,0,3);   //font,direction,font_size
-        outtextxy(660,550,"Black");
-        outtextxy(660,570, "Player");
+        outtextxy(660,650,"Black");
+        outtextxy(660,670, "Player");
 
 
     }
@@ -230,7 +460,7 @@ int DrawChessboard()
 // Function to validate and print valid rook moves
 int rookmove(int x, int y)
 {
-    // Check if the selected piece is a rook
+    //  if the selected piece is a rook
     char piece = board[selectedy - 1][selectedx - 1];
     if (piece != 'R' && piece != 'r')
     {
@@ -519,241 +749,6 @@ int kingmove(int x, int y)
 
 //pawn attack
 
-void pawnCheck(int x, int y, int whooseMove)
-{
-    int dy = (whooseMove == 0) ? 1 : -1; // Direction of pawn movement based on whose move it is
-
-    // Check for possible pawn attacks
-    if (x - 1 >= 0 && board[x - 1][y] == 'p')
-    {
-        // Pawn is attacking from the left
-        return; // King is under check by the pawn
-    }
-
-    if (x + 1 < 6 && board[x + 1][y] == 'p')
-    {
-        // Pawn is attacking from the right
-        return; // King is under check by the pawn
-    }
-
-    // Check for possible en passant captures
-    if (y - 1 >= 0 && board[x + dy][y - 1] == 'p')
-    {
-        // Pawn is attacking from the left (en passant)
-        return; // King is under check by the pawn
-    }
-
-    if (y + 1 < 5 && board[x + dy][y + 1] == 'p')
-    {
-        // Pawn is attacking from the right (en passant)
-        return; // King is under check by the pawn
-    }
-
-    return;
-}
-
-
-//knight attack
-
-void knightCheck(int x, int y, int whooseMove)
-{
-    int dx[8] = {2, 1, -1, -2, -2, -1, 1, 2};
-    int dy[8] = {1, 2, 2, 1, -1, -2, -2, -1};
-
-    for (int i = 0; i < 8; ++i)
-    {
-        int row = x + dx[i];
-        int col = y + dy[i];
-
-        if (row >= 0 && row < 6 && col >= 0 && col < 5)
-        {
-            if ((whooseMove == 0 && board[row][col] == 'n') || (whooseMove == 1 && board[row][col] == 'N'))
-            {
-                return; // King is under check by the knight
-            }
-        }
-    }
-
-    return;
-}
-
-
-
-//rook attack
-
-void rookCheck(int x,int y, int whooseMove)
-{
-    int dik[4][2]= {{-1,0},{1,0},{0,-1},{0,1}};
-    for(int i=0; i<4; ++i)
-    {
-        int row=x+dik[i][0];
-        int col=y+dik[i][1];
-        while(row>=0 && row<6 && col >=0 && col<5)
-        {
-            if(board[row][col] != ' ')
-            {
-                if((whooseMove ==0 && board[x-1][y-1]=='k') || (whooseMove==1 && board[x-1][y-1]=='K')) {
-                return;
-            }
-            break;
-        }
-        row += dik[i][0];
-            col +=dik[i][1] ;
-        }
-    }
-    return ;
-}
-
-//bishop attack
-
-void bishopCheck(int x, int y, int whooseMove)
-{
-    int dik[4][2] = { {-1, -1}, {-1, 1}, {1, -1}, {1, 1} };
-
-    for (int i = 0; i < 4; ++i)
-    {
-        int row = x + dik[i][0];
-        int col = y + dik[i][1];
-
-        while (row >= 0 && row < 6 && col >= 0 && col < 5)
-        {
-            if (board[row][col] != ' ')
-            {
-                if ((whooseMove == 0 && board[x-1][y-1] == 'k') || (whooseMove == 1 && board[x-1][y-1] == 'K'))
-                {
-                    return; // King is under check by the bishop
-                }
-                break;
-            }
-
-            row += dik[i][0];
-            col += dik[i][1];
-        }
-    }
-
-    return;
-}
-
-
-// queen attack
-
-void queenCheck(int x, int y, int whooseMove)
-{
-    int dik[8][2] = { {-1, 0}, {1, 0}, {0, -1}, {0, 1}, {-1, -1}, {-1, 1}, {1, -1}, {1, 1} };
-
-    for (int i = 0; i < 8; ++i)
-    {
-        int row = x + dik[i][0];
-        int col = y + dik[i][1];
-
-        while (row >= 0 && row < 6 && col >= 0 && col < 5)
-        {
-            if (board[row][col] != ' ')
-            {
-                if ((whooseMove == 0 && board[x-1][y-1] == 'k') || (whooseMove == 1 && board[x-1][y-1] == 'K'))
-                {
-                    return; // King is under check by the queen
-                }
-                break;
-            }
-
-            row += dik[i][0];
-            col += dik[i][1];
-        }
-    }
-
-    return;
-}
-
-//king attack
-void kingCheck(int x, int y, int whooseMove)
-{
-    int dik[8][2] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {-1, -1}, {-1, 1}, {1, -1}, {1, 1}};
-
-    for (int i = 0; i < 8; ++i)
-    {
-        int row = x + dik[i][0];
-        int col = y + dik[i][1];
-
-        if (row >= 0 && row < 6 && col >= 0 && col < 5 && (board[row][col] == 'K' || board[row][col] == 'k'))
-        {
-            if (whooseMove == 0 && board[row][col] == 'K')
-            {
-                return ; // White king is under check
-
-            }
-            else if (whooseMove == 1 && board[row][col] == 'k')
-            {
-                return; // Black king is under check
-            }
-        }
-    }
-
-    return; // King is not under check
-}
-
-
-
-
-void check(int x,int y,int whooseMove)
-{
-    if(whooseMove==1)
-    {
-        if(board[x][y]='P')
-        {
-            pawnCheck(x,y,0);
-        }
-        if(board[x][y]='K')
-        {
-            kingCheck(x,y,0);
-        }
-        if(board[x][y]='N')
-        {
-            knightCheck(x,y,0);
-        }
-        if(board[x][y]='R')
-        {
-            rookCheck(x,y,0);
-        }
-        if(board[x][y]='B')
-        {
-            bishopCheck(x,y,0);
-        }
-        if(board[x][y]='Q')
-        {
-            queenCheck(x,y,0);
-        }
-    }
-    if(whooseMove==0)
-    {
-        if(board[x][y]='p')
-        {
-            pawnCheck(x,y,0);
-        }
-        if(board[x][y]='k')
-        {
-            kingCheck(x,y,0);
-        }
-        if(board[x][y]='n')
-        {
-            knightCheck(x,y,0);
-        }
-        if(board[x][y]='r')
-        {
-            rookCheck(x,y,0);
-        }
-        if(board[x][y]='b')
-        {
-            bishopCheck(x,y,0);
-        }
-        if(board[x][y]='q')
-        {
-            queenCheck(x,y,0);
-        }
-    }
-
-}
-
 
 
 void selectandmove()
@@ -890,20 +885,18 @@ int selectSquare(int x, int y)
                 {
                     if(whooseMove == 0)
                     {
-                        printf("WHITEMOVED,%c",board[selectedy-1][selectedx-1]);
+                        if(!(board[y-1][x-1] >= 65 && board[y-1][x-1] <= 90))
+                        {
+                            printf("WHITEMOVED,%c",board[selectedy-1][selectedx-1]);
+                            if(pawnmove(x,y) || rookmove(x,y) || bishopmove(x,y) || knightmove(x,y) || queenmove(x,y) || kingmove(x,y))
+                            {
+                                whooseMove = 1;
+                                moving=0;
+                                selectedx = 0;
+                                selectedy = 0;
+                            }
 
-
-
-                        pawnmove(x,y);
-                        rookmove(x,y);
-                        bishopmove(x,y);
-                        knightmove(x,y);
-                        queenmove(x,y);
-                        kingmove(x,y);
-                        whooseMove = 1;
-                        moving=0;
-                        selectedx = 0;
-                        selectedy = 0;
+                        }
                         DrawChessboard();
                     }
                     else
@@ -923,19 +916,19 @@ int selectSquare(int x, int y)
                 {
                     if(whooseMove == 1)
                     {
-                        printf("BLACKMOVED,%c",board[selectedy-1][selectedx-1]);
-                        pawnmove(x,y);
-                        rookmove(x,y);
-                        bishopmove(x,y);
-                        knightmove(x,y);
-                        queenmove(x,y);
-                        kingmove(x,y);
-                        whooseMove = 0;
-                        moving=0;
-                        selectedx = 0;
-                        selectedy = 0;
-                        DrawChessboard();
+                        if(!(board[y-1][x-1] >= 97 && board[y-1][x-1] <= 122))
+                        {
+                            printf("BLACKMOVED,%c",board[selectedy-1][selectedx-1]);
+                            if(pawnmove(x,y) || rookmove(x,y) || bishopmove(x,y) || knightmove(x,y) || queenmove(x,y) || kingmove(x,y))
+                            {
+                                whooseMove = 0;
+                                moving=0;
+                                selectedx = 0;
+                                selectedy = 0;
+                            }
+                        }
 
+                        DrawChessboard();
 
                     }
                     else
@@ -967,11 +960,10 @@ int selectSquare(int x, int y)
 int main()
 {
 
-
+    printf("%d   %d",piecevalue(0),piecevalue(1));
     int gr = DETECT, gm;
 
     initwindow(800,800,"MENU",0,0,false,true);
-
     DrawChessboard();
 
     selectSquare(1,1);
