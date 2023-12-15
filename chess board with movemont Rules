@@ -5,7 +5,6 @@
 //#include<iostream>
 #include<math.h>
 
-
 char board[6][5] =
 {
     {'Q','K', 'B','N','R'},
