@@ -1,4 +1,3 @@
-// C program to create a chess board
 #include <conio.h>
 #include <dos.h>
 #include <graphics.h>
